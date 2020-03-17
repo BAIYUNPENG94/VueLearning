@@ -11,27 +11,58 @@
           :class="[selectedindex === index ? 'selected' : '']"
         >{{ answer }}</b-list-group-item>
       </b-list-group>
-      <b-button variant="primary" href="#">SUBMIT</b-button>
+      <b-button @click="submitAnswer" variant="primary">SUBMIT</b-button>
       <b-button @click="next" variant="success" href="#">Next One</b-button>
     </b-jumbotron>
   </div>
 </template>
 
 <script>
+import _ from "lodash";
+
 export default {
   props: {
     currentquestion: Object,
-    next: Function
+    next: Function,
+    increment: Function
   },
   data() {
     return {
-      selectedindex: null
+      correct_index: null,
+      selectedindex: null,
+      shuffledanswers: []
     };
   },
   methods: {
     selectanswer: function(index) {
       this.selectedindex = index;
       console.log(index);
+    },
+    submitAnswer: function() {
+      let iscorrect = false;
+      if (this.selectedindex === this.correct_index) {
+        iscorrect = true;
+      }
+      this.increment(iscorrect);
+    },
+    shuffleanswers: function() {
+      let answers = [
+        ...this.currentquestion.incorrect_answers,
+        this.currentquestion.correct_answer
+      ];
+      this.shuffledanswers = _.shuffle(answers);
+      this.correct_index = this.shuffledanswers.indexOf(
+        this.currentquestion.correct_answer
+      );
+    }
+  },
+  watch: {
+    currentquestion: {
+      immediate: true,
+      handler() {
+        this.selectedindex = null;
+        this.shuffleanswers();
+      }
     }
   },
   computed: {
@@ -59,7 +90,7 @@ export default {
 }
 
 .selected {
-  background-color: blue;
+  background-color: lightgreen;
 }
 
 .correctanswer {
