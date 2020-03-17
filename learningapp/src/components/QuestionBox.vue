@@ -8,10 +8,16 @@
           v-for="(answer, index) in answers"
           :key="index"
           @click.prevent="selectanswer(index)"
-          :class="[selectedindex === index ? 'selected' : '']"
+          :class="[!answered && selectedindex === index ? 'selected':
+          answered && correct_index === index ? 'correctanswer':
+          answered && selectedindex === index && correct_index !== selectedindex ? 'wronganswer':'']"
         >{{ answer }}</b-list-group-item>
       </b-list-group>
-      <b-button @click="submitAnswer" variant="primary">SUBMIT</b-button>
+      <b-button
+        @click="submitAnswer"
+        variant="primary"
+        :disabled="selectedindex == null || answered"
+      >SUBMIT</b-button>
       <b-button @click="next" variant="success" href="#">Next One</b-button>
     </b-jumbotron>
   </div>
@@ -30,7 +36,8 @@ export default {
     return {
       correct_index: null,
       selectedindex: null,
-      shuffledanswers: []
+      shuffledanswers: [],
+      answered: false
     };
   },
   methods: {
@@ -43,6 +50,7 @@ export default {
       if (this.selectedindex === this.correct_index) {
         iscorrect = true;
       }
+      this.answered = true;
       this.increment(iscorrect);
     },
     shuffleanswers: function() {
@@ -62,6 +70,7 @@ export default {
       handler() {
         this.selectedindex = null;
         this.shuffleanswers();
+        this.answered = false;
       }
     }
   },
@@ -90,14 +99,14 @@ export default {
 }
 
 .selected {
-  background-color: lightgreen;
+  background-color: lightblue;
 }
 
 .correctanswer {
-  background-color: green;
+  background-color: lightgreen;
 }
 
-.wrong answer {
-  background-color: red;
+.wronganswer {
+  background-color: lightsalmon;
 }
 </style>
