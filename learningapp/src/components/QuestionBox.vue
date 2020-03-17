@@ -8,9 +8,7 @@
           v-for="(answer, index) in answers"
           :key="index"
           @click.prevent="selectanswer(index)"
-          :class="[!answered && selectedindex === index ? 'selected':
-          answered && correct_index === index ? 'correctanswer':
-          answered && selectedindex === index && correct_index !== selectedindex ? 'wronganswer':'']"
+          :class="answerClass(index)"
         >{{ answer }}</b-list-group-item>
       </b-list-group>
       <b-button
@@ -62,6 +60,22 @@ export default {
       this.correct_index = this.shuffledanswers.indexOf(
         this.currentquestion.correct_answer
       );
+    },
+    answerClass: function(index) {
+      let answerClass = "";
+      if (this.selectedindex === index && !this.answered) {
+        answerClass = "selected";
+      } else if (this.answered && this.correct_index === index) {
+        answerClass = "correctanswer";
+      } else if (
+        this.answered &&
+        this.selectedindex === index &&
+        this.correct_index !== this.selectedindex
+      ) {
+        answerClass = "wronganswer";
+      }
+
+      return answerClass;
     }
   },
   watch: {
